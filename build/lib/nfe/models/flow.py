@@ -3,8 +3,7 @@ from typing import List, Optional
 import torch.nn as nn
 import stribor as st
 from torch import Tensor
-from torch.nn import Linear, Module, ModuleList, MultiheadAttention
-from torch.fft import fft, ifft
+from torch.nn import Module
 
 
 class CouplingFlow(Module):
@@ -107,76 +106,3 @@ class ResNetFlow(Module):
             x = layer(x, t)
 
         return x
-
-
-class FourierFlow(Module):
-    """
-    Fourier Transform-based Flow model
-
-    Args:
-        dim: Data dimension
-        n_layers: Number of Fourier layers
-        hidden_dim: Hidden dimensions of the transformation
-    """
-    def __init__(self, dim, n_layers, hidden_dim):
-        super().__init__()
-        self.layers = ModuleList([
-            nn.Sequential(
-                Linear(dim, hidden_dim),
-                nn.ReLU(),
-                Linear(hidden_dim, dim)
-            ) for _ in range(n_layers)
-        ])
-
-    def forward(self, x: Tensor, t: Tensor) -> Tensor:
-        if x.shape[-2] != t.shape[-2]:
-            x = x.repeat_interleave(t.shape[-2], dim=-2)
-
-        # Apply Fourier transform
-        fourier_coeff = fft(x, dim=-2).real  # Only real part
-        for layer in self.layers:
-            fourier_coeff = layer(fourier_coeff)
-
-        return ifft(fourier_coeff, dim=-2).real  # Return to time domain
-    
-    
-class AttentionFlow(Module):
-    """
-    Attention-based Flow model with input dimension adjustment.
-
-    Args:
-        dim: Data dimension
-        n_layers: Number of flow layers
-        hidden_dim: Hidden dimension for intermediate layers (must match embed_dim)
-        n_heads: Number of attention heads
-    """
-    def __init__(self, dim, n_layers, hidden_dim, n_heads):
-        super().__init__()
-
-        # Linear layers to adjust input/output dimensions
-        self.input_proj = nn.Linear(dim, hidden_dim)
-        self.output_proj = nn.Linear(hidden_dim, dim)
-
-        # Attention layers
-        self.layers = nn.ModuleList([
-            nn.MultiheadAttention(embed_dim=hidden_dim, num_heads=n_heads, batch_first=True)
-            for _ in range(n_layers)
-        ])
-
-    def forward(self, x: Tensor, t: Tensor) -> Tensor:
-        # Project input to match embed_dim
-        x = self.input_proj(x)
-
-        # Ensure time steps match
-        if x.shape[-2] != t.shape[-2]:
-            x = x.repeat_interleave(t.shape[-2], dim=-2)
-
-        # Apply attention layers
-        for layer in self.layers:
-            attn_output, _ = layer(x, x, x)  # Query, Key, Value are all x
-            x = attn_output
-
-        # Project back to original dimension
-        x = self.output_proj(x)
-        return x
-

@@ -5,7 +5,7 @@ install_requires = [
     'pandas',
     'matplotlib',
     'scipy',
-    'sklearn',
+    'scikit-learn',
     'tqdm',
     'stribor==0.1.0',
     'torch>=1.8.0',

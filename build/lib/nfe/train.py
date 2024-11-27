@@ -21,7 +21,7 @@ parser.add_argument('--model', type=str, help='Whether to use ODE or flow based 
                     choices=['ode', 'flow', 'rnn'])
 parser.add_argument('--data',  type=str, help='Dataset name',
                     choices=['hopper', 'physionet', 'activity', # latent ode
-                             'sine', 'square', 'triangle', 'sawtooth', 'sink', 'ellipse', 'heat', 'burgers',# synthetic
+                             'sine', 'square', 'triangle', 'sawtooth', 'sink', 'ellipse', # synthetic
                              'mimic3', 'mimic4', '2dou', #gru-ode-bayes
                              'hawkes1', 'hawkes2', 'poisson', 'renewal', 'reddit', 'mooc', 'lastfm', 'wiki', # tpp
                              'pinwheel', 'earthquake', 'covid', 'bike', # stpp
@@ -51,7 +51,7 @@ parser.add_argument('--atol', type=float, default=1e-4, help='Absolute tolerance
 parser.add_argument('--rtol', type=float, default=1e-3, help='Relative tolerance')
 
 # Flow model args
-parser.add_argument('--flow-model', type=str, default='coupling', help='Model name', choices=['coupling', 'resnet', 'gru', 'fourier','attention'])
+parser.add_argument('--flow-model', type=str, default='coupling', help='Model name', choices=['coupling', 'resnet', 'gru'])
 parser.add_argument('--flow-layers', type=int, default=1, help='Number of flow layers')
 parser.add_argument('--time-net', type=str, default='TimeLinear', help='Name of time net', choices=['TimeFourier', 'TimeFourierBounded', 'TimeLinear', 'TimeTanh'])
 parser.add_argument('--time-hidden-dim', type=int, default=1, help='Number of time features (only for Fourier)')
@@ -83,9 +83,6 @@ parser.add_argument('--marks', type=int, default=0, help='Whether to use marked 
 # STPP args
 parser.add_argument('--density-model', type=str, help='Type of density model', choices=['independent', 'attention', 'jump'])
 
-parser.add_argument('--nu', type=int, default=20, help='Value for Nu (nonlinearity parameter)')
-parser.add_argument('--nf', type=int, default=2000, help='Value for Nf (feature size)')
-
 args = parser.parse_args()
 
 def get_experiment(args, logger):
@@ -110,4 +107,3 @@ if __name__ == '__main__':
 
     experiment.train()
     experiment.finish()
-            
