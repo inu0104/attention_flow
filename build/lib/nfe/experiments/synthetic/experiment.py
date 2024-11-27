@@ -1,14 +1,22 @@
 from pathlib import Path
 
 import numpy as np
+import csv
 import torch
 
 from nfe.experiments import BaseExperiment
 from nfe.experiments.synthetic.data import get_data_loaders, get_single_loader
-from nfe.models import ODEModel, CouplingFlow, ResNetFlow
+from nfe.models import ODEModel, CouplingFlow, ResNetFlow, GRUFlow, FourierFlow, AttentionFlow
 
 
 class Synthetic(BaseExperiment):
+    def __init__(self, args, logger):
+        super().__init__(args, logger)
+        self.Nu = args.Nu  # Nu 값을 동적으로 설정
+        self.Nf = args.Nf  # Nf 값을 동적으로 설정
+        self.model = self.get_model(args)
+        self.dim = 1  # 차원 설정 (문제에 맞게 조정 가능)
+        
     def get_model(self, args):
         if args.model == 'ode':
             return ODEModel(self.dim, args.odenet, [args.hidden_dim] * args.hidden_layers, args.activation,
@@ -20,10 +28,16 @@ class Synthetic(BaseExperiment):
             elif args.flow_model == 'resnet':
                 return ResNetFlow(self.dim, args.flow_layers, [args.hidden_dim] * args.hidden_layers,
                                   args.time_net, args.time_hidden_dim)
+            elif args.flow_model == 'gru':  # Add GRUFlow support
+                return GRUFlow(self.dim, args.flow_layers, args.time_net, args.time_hidden_dim)
+            elif args.flow_model == 'fourier':  # Add FourierFlow support
+                return FourierFlow(self.dim, args.flow_layers, args.hidden_dim)
+            elif args.flow_model == 'attention':  # Add AttentionFlow support
+                return AttentionFlow(self.dim, args.flow_layers, args.hidden_dim, n_heads=1)
         raise NotImplementedError
 
     def get_data(self, args):
-        return get_data_loaders(args.data, args.batch_size)
+        return get_data_loaders(args.data, args.batch_size, args.Nu, args.Nf)
 
     def _get_loss(self, batch):
         x, t, y_true = batch
@@ -64,6 +78,28 @@ class Synthetic(BaseExperiment):
         self.logger.info(f'loss_extrap_time={loss_time:.5f}')
         self.logger.info(f'loss_extrap_space={loss_space:.5f}')
 
+        test_loss = self.test_step()
+        loss_extrap_time = self._get_loss_on_dl(get_single_loader(f'{self.args.data}_extrap_time', self.args.batch_size))
+        loss_extrap_space = self._get_loss_on_dl(get_single_loader(f'{self.args.data}_extrap_space', self.args.batch_size))
+
+        self.save_results_to_csv(test_loss, loss_extrap_time, loss_extrap_space)
+
+    def save_results_to_csv(self, test_loss, loss_extrap_time, loss_extrap_space):
+        # Path to save CSV
+        csv_file = './experiment_results.csv'
+        
+        # If the CSV file doesn't exist, write the header
+        file_exists = Path(csv_file).exists()
+
+        with open(csv_file, mode='a', newline='') as file:
+            writer = csv.writer(file)
+            
+            # If file doesn't exist, write header
+            if not file_exists:
+                writer.writerow(["Nu", "Nf", "test_loss", "loss_extrap_time", "loss_extrap_space"])
+            
+            # Write the row with current experiment results
+            writer.writerow([self.Nu, self.Nf, test_loss, loss_extrap_time, loss_extrap_space])
         ## Uncomment to save models
         # OUT_DIR = ...
         # torch.save(self.model.state_dict(), OUT_DIR / 'model.pt')

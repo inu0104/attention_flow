@@ -1,0 +1,45 @@
+INFO:root:Device: cpu
+INFO:root:num_params=114484
+INFO:root:[epoch=0001|iter=0001] train_loss=0.09511
+INFO:root:[epoch=0001] epoch_duration=1.012470
+INFO:root:[epoch=0001] val_loss=0.08003
+INFO:root:[epoch=0002|iter=0001] train_loss=0.09511
+INFO:root:[epoch=0002] epoch_duration=1.017925
+INFO:root:[epoch=0002] val_loss=0.08003
+INFO:root:[epoch=0003|iter=0001] train_loss=0.09511
+INFO:root:[epoch=0003] epoch_duration=1.016448
+INFO:root:[epoch=0003] val_loss=0.08003
+INFO:root:[epoch=0004|iter=0001] train_loss=0.09511
+INFO:root:[epoch=0004] epoch_duration=1.017787
+INFO:root:[epoch=0004] val_loss=0.08003
+INFO:root:[epoch=0005|iter=0001] train_loss=0.09511
+INFO:root:[epoch=0005] epoch_duration=1.016727
+INFO:root:[epoch=0005] val_loss=0.08003
+INFO:root:[epoch=0006|iter=0001] train_loss=0.09511
+INFO:root:[epoch=0006] epoch_duration=1.023325
+INFO:root:[epoch=0006] val_loss=0.08003
+INFO:root:[epoch=0007|iter=0001] train_loss=0.09511
+INFO:root:[epoch=0007] epoch_duration=1.018384
+INFO:root:[epoch=0007] val_loss=0.08003
+INFO:root:[epoch=0008|iter=0001] train_loss=0.09511
+INFO:root:[epoch=0008] epoch_duration=1.019205
+INFO:root:[epoch=0008] val_loss=0.08003
+INFO:root:[epoch=0009|iter=0001] train_loss=0.09511
+INFO:root:[epoch=0009] epoch_duration=1.018916
+INFO:root:[epoch=0009] val_loss=0.08003
+INFO:root:[epoch=0010|iter=0001] train_loss=0.09511
+INFO:root:[epoch=0010] epoch_duration=1.019534
+INFO:root:[epoch=0010] val_loss=0.08003
+INFO:root:[epoch=0011|iter=0001] train_loss=0.09511
+INFO:root:[epoch=0011] epoch_duration=1.013899
+INFO:root:[epoch=0011] val_loss=0.08003
+INFO:root:[epoch=0012|iter=0001] train_loss=0.09511
+INFO:root:[epoch=0012] epoch_duration=1.019030
+INFO:root:[epoch=0012] val_loss=0.08003
+INFO:root:[epoch=0013|iter=0001] train_loss=0.09511
+INFO:root:[epoch=0013] epoch_duration=1.019535
+INFO:root:[epoch=0013] val_loss=0.08003
+INFO:root:epoch_duration_mean=1.01794
+INFO:root:test_loss=0.08091
+INFO:root:loss_extrap_time=0.06929
+INFO:root:loss_extrap_space=0.05414
